@@ -28,7 +28,7 @@ class FrontPageController extends Controller
             }
             $categories->transform(function ($category) {
                 if (!empty($category->image)) {
-                    $category->image = asset('images/category/thumb/' . $category->image);
+                    $category->image = asset('images/category/' . $category->image);
                 } else {
                     $category->image = null;
                 }

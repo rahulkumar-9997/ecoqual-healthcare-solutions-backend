@@ -117,7 +117,7 @@
                                     </td>
                                     <td>
                                           @if(!empty($category_list_row->image))
-                                             <img src="{{ asset('images/category/thumb/'. $category_list_row->image) }}" style="width: 50px;">
+                                             <img src="{{ asset('images/category/'. $category_list_row->image) }}" style="width: 50px;">
                                           @endif
                                     </td>
                                     <td>

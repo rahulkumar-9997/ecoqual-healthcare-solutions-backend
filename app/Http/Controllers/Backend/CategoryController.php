@@ -128,10 +128,17 @@ class CategoryController extends Controller
             }
             $name_input = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->input('name')));
             $timestamp = round(microtime(true) * 1000);
-            $image_file_name = 'ecoqual-healthcare-solutions-' . $name_input . '-' . $timestamp . '.webp';
-            $img = Image::make($image->getRealPath());
-            $img->encode('webp', 90)->save($destinationPath . '/' . $image_file_name);
-            $input['image'] = $image_file_name;
+            $extension = $image->getClientOriginalExtension();
+            if ($extension === 'svg' || $extension === 'svg+xml') {
+                $image_file_name = 'ecoqual-healthcare-solutions-' . $name_input . '-' . $timestamp . '.svg';
+                $image->move($destinationPath, $image_file_name);
+                $input['image'] = $image_file_name;
+            } else {
+                $image_file_name = 'ecoqual-healthcare-solutions-' . $name_input . '-' . $timestamp . '.webp';
+                $img = Image::make($image->getRealPath());
+                $img->encode('webp', 90)->save($destinationPath . '/' . $image_file_name);
+                $input['image'] = $image_file_name;
+            }
         }
         $category_create = Category::create($input);
         if ($request->has('map_category_attributes')) {
@@ -283,10 +290,17 @@ class CategoryController extends Controller
             }
             $name_input = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->input('name')));
             $timestamp = round(microtime(true) * 1000);
-            $image_file_name = 'ecoqual-healthcare-solutions-' . $name_input . '-' . $timestamp . '.webp';
-            $img = Image::make($image->getRealPath());
-            $img->encode('webp', 90)->save($destinationPath . '/' . $image_file_name);
-            $input['image'] = $image_file_name;
+            $extension = $image->getClientOriginalExtension();
+            if ($extension === 'svg' || $extension === 'svg+xml') {
+                $image_file_name = 'ecoqual-healthcare-solutions-' . $name_input . '-' . $timestamp . '.svg';
+                $image->move($destinationPath, $image_file_name);
+                $input['image'] = $image_file_name;
+            } else {
+                $image_file_name = 'ecoqual-healthcare-solutions-' . $name_input . '-' . $timestamp . '.webp';
+                $img = Image::make($image->getRealPath());
+                $img->encode('webp', 90)->save($destinationPath . '/' . $image_file_name);
+                $input['image'] = $image_file_name;
+            }
         }
         $category_row_update = $category_row->update($input);
         if ($category_row_update) {
