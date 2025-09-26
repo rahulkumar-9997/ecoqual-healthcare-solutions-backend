@@ -46,6 +46,8 @@ use App\Http\Controllers\Backend\VideoController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('images/{foldername}/{filename}', [FrontendController::class, 'productImage'])
+     ->where('filename', '.*')->name('product.image');
 Route::get('/', [FrontendController::class, 'home'])->name('home');
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 /**backend rout */

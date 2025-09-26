@@ -162,8 +162,8 @@ class ProductsController extends Controller
                         $extension = $image->getClientOriginalExtension();
                         $sanitized_title = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->input('product_name')));
                         $uniqueTimestamp = round(microtime(true) * 1000);
-                        $image_file_name_webp = 'himgiri-coolers-almirah-' . $sanitized_title . '-' . $uniqueTimestamp . '.webp';
-                        $image_file_name_jpg = 'himgiri-coolers-almirah-' . $sanitized_title . '-' . $uniqueTimestamp . '.jpg';
+                        $image_file_name_webp = 'ecoqual-healthcare-solutions-' . $sanitized_title . '-' . $uniqueTimestamp . '.webp';
+                        $image_file_name_jpg = 'ecoqual-healthcare-solutions-' . $sanitized_title . '-' . $uniqueTimestamp . '.jpg';
                         $this->saveProductImages($image, $image_file_name_webp);
                         $this->saveProductImagesToJpg($image, $image_file_name_jpg);
                         ProductImages::create([
@@ -433,8 +433,8 @@ class ProductsController extends Controller
                     
                     $sanitized_title = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->input('product_name')));
                     $timestamp = round(microtime(true) * 1000);
-                    $image_file_name_webp = 'himgiri-coolers-almirah-' . $sanitized_title . '-' . $timestamp . '.webp';
-                    $image_file_name_jpg = 'himgiri-coolers-almirah-' . $sanitized_title . '-' . $timestamp . '.jpg';
+                    $image_file_name_webp = 'ecoqual-healthcare-solutions-' . $sanitized_title . '-' . $timestamp . '.webp';
+                    $image_file_name_jpg = 'ecoqual-healthcare-solutions-' . $sanitized_title . '-' . $timestamp . '.jpg';
                     $this->processImage($image, $image_file_name_webp);
                     $this->saveProductImagesToJpg($image, $image_file_name_jpg);
                     ProductImages::create([
@@ -1389,8 +1389,8 @@ class ProductsController extends Controller
                     $filenameWithExt = $image->getClientOriginalName();
                     $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                     $sanitized_title = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $product_row->title));
-                    $image_file_name_webp = 'himgiri-coolers-almirah-' . $sanitized_title . '-' . $timestamp . '.webp';
-                    $image_file_name_jpg = 'himgiri-coolers-almirah-' . $sanitized_title . '-' . $timestamp . '.jpg';
+                    $image_file_name_webp = 'ecoqual-healthcare-solutions-' . $sanitized_title . '-' . $timestamp . '.webp';
+                    $image_file_name_jpg = 'ecoqual-healthcare-solutions-' . $sanitized_title . '-' . $timestamp . '.jpg';
                     $this->saveProductImages($image, $image_file_name_webp);
                     $this->saveProductImagesToJpg($image, $image_file_name_jpg);
                     ProductImages::create([
@@ -1557,8 +1557,8 @@ class ProductsController extends Controller
                         $filenameWithExt = $image->getClientOriginalName();
                         $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
                         $sanitized_title = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $product_row->title));
-                        $image_file_name_webp = 'himgiri-coolers-almirah-' . $sanitized_title . '-' . $timestamp . '.webp';
-                        $image_file_name_jpg = 'himgiri-coolers-almirah-' . $sanitized_title . '-' . $timestamp . '.jpg';
+                        $image_file_name_webp = 'ecoqual-healthcare-solutions-' . $sanitized_title . '-' . $timestamp . '.webp';
+                        $image_file_name_jpg = 'ecoqual-healthcare-solutions-' . $sanitized_title . '-' . $timestamp . '.jpg';
                         //Log::info("Processing image: Original Name - {$filenameWithExt}, New Name - {$image_file_name}");
                         $this->saveProductImages($image, $image_file_name_webp);
                         $this->saveProductImagesToJpg($image, $image_file_name_jpg);

@@ -25,3 +25,4 @@ if (!function_exists('numberToWords')) {
         return 'Number out of range';
     }
 }
+

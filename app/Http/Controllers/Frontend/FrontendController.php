@@ -33,6 +33,30 @@ use Torann\GeoIP\Location;
 
 class FrontendController extends Controller
 {
+    public function productImage(Request $request, $foldername, $filename)
+    {
+        $path = public_path("images/{$foldername}/{$filename}");
+
+        if (!File::exists($path)) {
+            abort(404, 'Image not found');
+        }
+
+        $width = $request->query('w');
+        $img = Image::make($path);
+
+        if ($width) {
+            $img->resize($width, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+        }
+
+        // Return with proper headers
+        return response($img->encode('webp'))
+            ->header('Content-Type', 'image/webp')
+            ->header('Cache-Control', 'public, max-age=31536000'); // optional caching
+    }
+
     public function home(){        
         return view('frontend.index');
     }    
