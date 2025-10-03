@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Label;
+use App\Models\Blog;
+use App\Models\BlogParagraph;
 use Exception;
 class FrontPageController extends Controller
 {
@@ -68,7 +70,7 @@ class FrontPageController extends Controller
                 $product->product_description = $this->stripInlineStyles($product->product_description);
                 if ($product->images->isNotEmpty()) {
                     $filename = $product->images[0]->image_path;
-                    $product->image = asset('images/product/thumb/' . $filename);
+                    $product->image = asset('images/product/small/' . $filename);
                 } else {
                     $product->image = null;
                 }
@@ -223,6 +225,45 @@ class FrontPageController extends Controller
         }
     }
 
+    public function blogList(){
+
+        try {
+            $blogs = Blog::select('id', 'title', 'slug', 'blog_image', 'blog_description')
+                ->where('status', 1)
+                ->orderBy('id', 'desc')
+                ->get();
+
+
+            if ($blogs->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No blog found.',
+                    'data'    => []
+                ], 200);
+            }
+            $blogs->transform(function ($blogs) {
+                if (!empty($blogs->blog_image)) {
+                    $blogs->blog_image = asset('images/category/' . $blogs->blog_image);
+                } else {
+                    $blogs->blog_image = null;
+                }
+                return $blogs;
+            });
+            return response()->json([
+                'success' => true,
+                'message' => 'Categories fetched successfully.',
+                'data'    => $categories
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     private function stripInlineStyles($html)
     {
@@ -239,5 +280,7 @@ class FrontPageController extends Controller
 
         return $dom->saveHTML();
     }
+
+
 
 }

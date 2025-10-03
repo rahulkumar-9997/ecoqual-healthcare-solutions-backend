@@ -18,12 +18,12 @@
                     <h4 class="card-title flex-grow-1"> Create new Blog</h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{route('manage-blog.store')}}" accept-charset="UTF-8" enctype="multipart/form-data" id="addNewBlog">
+                    <form method="POST" action="{{route('manage-blog.store')}}" accept-charset="UTF-8" enctype="multipart/form-data" id="addNewBlog" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="blog_category" class="form-label">Select Blog Category*</label>
+                                    <label for="blog_category" class="form-label">Select Blog Category</label>
                                     <select class="form-control" id="blog_category" data-choices data-choices-groups data-placeholder="Select Blog Categories" name="blog_category">
                                         <option value="">Select Blog Category</option>
                                         @foreach ($blog_category as $blog_category_row)
@@ -43,7 +43,7 @@
                                     <input type="text" id="blog_name" name="blog_name" class="form-control" value="{{ old('blog_name')}}">
                                     @if($errors->has('blog_name'))
                                     <div class="text-danger">{{ $errors->first('blog_name') }}</div>
-                                    @endif
+                                    @endif                                    
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -134,7 +134,6 @@
                                                 </div>
                                                 <input type="hidden" name="product_id[]" class="product_id">
                                             </div>
-                                            <!-- <input type="text" id="blog_links_two" name="blog_links_two[]" placeholder="Enter Blog Links Two" class="form-control"> -->
                                             @if($errors->has('blog_links_two'))
                                             <div class="text-danger">{{ $errors->first('blog_links_two') }}</div>
                                             @endif
@@ -149,15 +148,8 @@
                                     </tr>
                                 </table>
                             </div>
-                            <!--<div class="mb-3 col-md-12">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="status" name="status">
-                                <label class="form-check-label" for="status">Status</label>
-                            </div>
-                        </div>-->
-
-                            <div class="pb-0 pt-3">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <div class="pb-0 pt-3 d-flex gap-2 justify-content-end">
+                                <a href="{{ route('manage-blog.index') }}" class="btn btn-secondary">Cancel</a>
                                 <button type="submit" class="btn btn-primary">Save changes</button>
                             </div>
                         </div>

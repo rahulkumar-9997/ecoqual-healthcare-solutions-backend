@@ -18,7 +18,7 @@
                <h4 class="card-title flex-grow-1"> Edit Blog</h4>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{route('manage-blog.update', $blog->id)}}" accept-charset="UTF-8" enctype="multipart/form-data" id="editBlog">
+                <form method="POST" action="{{route('manage-blog.update', $blog->id)}}" accept-charset="UTF-8" enctype="multipart/form-data" id="editBlog" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
                     @csrf
                     <input type="hidden" name="_method" value="PUT">
                     <div class="row">
@@ -49,13 +49,13 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="blog_img" class="form-label">Blog Title Image *</label>
+                                <label for="blog_img" class="form-label">Blog  Image *</label>
                                 <input type="file" id="blog_img" class="form-control" aria-label="file example"  name="blog_img" accept="image/*"  value="{{ old('blog_img')}}">
                                 @if($errors->has('blog_img'))
                                     <div class="text-danger">{{ $errors->first('blog_img') }}</div>
                                 @endif
                                 @if($blog->blog_image)
-                                    <img src="{{ asset($blog->blog_image) }}" class="mt-2" height="50">
+                                    <img src="{{ asset('images/blog/'.$blog->blog_image) }}" class="mt-2" height="50">
                                 @endif
                             </div>
                         </div>
@@ -119,13 +119,6 @@
                                             
                                         </td>
                                         <td>
-                                            <!-- <input type="file" id="paragraphs_img" class="form-control" aria-label="file example"  name="paragraphs_img[]" accept="image/*">
-                                            @if($errors->has('paragraphs_img'))
-                                                <div class="text-danger">{{ $errors->first('paragraphs_img') }}</div>
-                                            @endif -->
-                                            <!-- @if($paragraph->bog_paragraph_image)
-                                                <img src="{{ asset($paragraph->bog_paragraph_image) }}" class="mt-2" height="50">
-                                            @endif -->
                                             @if ($paragraph->productLinks->isNotEmpty())
                                                 @foreach($paragraph->productLinks as $linkIndex => $link)
                                                     <br>
@@ -146,26 +139,7 @@
                                                     @if($errors->has('blog_links_one'))
                                                         <div class="text-danger">{{ $errors->first('blog_links_one') }}</div>
                                                     @endif
-                                                @endforeach
-                                                <!-- <br>
-                                                <label for="blog_img" class="form-label">Select Blog Links Two</label>
-                                                
-                                                <div class="position-relative autocompleted">
-                                                    <div class="input-group">
-                                                        <input type="text" id="product_name" name="product_name[]" class="form-control product-autocomplete" value="{{$product_name_second}}">
-
-                                                        <span class="input-group-text">
-                                                            <i class="ti ti-refresh"></i>
-                                                            <div class="spinner-border spinner-border-sm product-loader" role="status" style="display: none;">
-                                                                <span class="visually-hidden">Loading...</span>
-                                                            </div>
-                                                        </span>
-                                                    </div>
-                                                    <input type="hidden" value="{{$product_id_second}}" name="product_id[]" class="product_id">
-                                                </div>
-                                                @if($errors->has('blog_links_two'))
-                                                    <div class="text-danger">{{ $errors->first('blog_links_two') }}</div>
-                                                @endif -->
+                                                @endforeach                                                
                                             @endif
                                         </td>
                                         <td>
@@ -184,20 +158,12 @@
                                 @endforeach
                             </table>
                         </div>
-                        <!--<div class="mb-3 col-md-12">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="status" name="status">
-                                <label class="form-check-label" for="status">Status</label>
-                            </div>
-                        </div>-->
-                        
-                        <div class="pb-0 pt-3">
+                        <div class="pb-0 pt-3 d-flex gap-2 justify-content-end">
                             <button type="submit" class="btn btn-primary">Update</button>
                             <a href="{{ url()->previous() }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </div>
                 </form>
-
             </div>
          </div>
       </div>

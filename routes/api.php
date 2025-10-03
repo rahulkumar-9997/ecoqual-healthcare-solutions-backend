@@ -22,6 +22,7 @@ Route::prefix('categories')->group(function () {
 Route::get('products/{slug}', [FrontPageController::class, 'productDetails'])->name('products.details');
 
 Route::get('home-product', [FrontPageController::class, 'homeProductList'])->name('home-product');
+Route::get('blog', [FrontPageController::class, 'blogList'])->name('blog');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

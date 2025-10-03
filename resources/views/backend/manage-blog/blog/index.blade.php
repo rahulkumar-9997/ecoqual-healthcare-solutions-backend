@@ -48,12 +48,12 @@
                                  <tr>
                                     <td>{{ $sr_no }}</td>
                                     <td>{{ $blogs_row->title }}</td>
-                                    <td>{{ $blogs_row->category->title }}</td>
+                                    <td>{{ $blogs_row->category?->title ?? '-' }}</td>
                                     <td>
                                        {!! $blogs_row->bog_description !!}
                                     </td>
                                     <td>
-                                       <img src="{{ asset($blogs_row->blog_image) }}" class="img-thumbnail" style="width: 70px; height: 70px;" alt="{{ $blogs_row->title }}">
+                                       <img src="{{ asset('images/blog/'.$blogs_row->blog_image) }}" class="img-thumbnail" style="width: 70px; height: 70px;" alt="{{ $blogs_row->title }}">
                                     </td>
                                     <td>
                                           <span class="badge bg-primary ms-1" data-bs-toggle="tooltip" data-bs-original-title="{{ $blogs_row->title }}">
