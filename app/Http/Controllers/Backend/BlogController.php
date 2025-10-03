@@ -285,7 +285,6 @@ class BlogController extends Controller
         $img->resize(800, null, function ($constraint) {
             $constraint->aspectRatio();
         })->encode('webp', 80)->save($imageWebPPath);
-
         return $fileName . '.webp';
     }
 }
