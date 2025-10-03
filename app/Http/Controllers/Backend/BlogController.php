@@ -108,25 +108,7 @@ class BlogController extends Controller
             Log::error('Error creating blog: ' . $e->getMessage());
             return redirect()->back()->with('error', $e->getMessage());
         }
-    }
-
-    private function compressAndSaveImage($image, $blogTitle) {
-        $destinationPath = public_path("images/blog/");
-        if (!file_exists($destinationPath)) {
-            mkdir($destinationPath, 0755, true);
-        }
-        $cleanBlogTitle = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $blogTitle));
-        $fileName = 'ecoqual-healthcare-solutions-' . $cleanBlogTitle . '-' . round(microtime(true) * 1000);
-        $imagePath = $destinationPath . $fileName . '.' . $image->getClientOriginalExtension();
-        $imageWebPPath = $destinationPath . $fileName . '.webp';
-        $img = Image::make($image->getRealPath());
-        $img->resize(800, null, function ($constraint) {
-            $constraint->aspectRatio();
-        })->save($imagePath, 80);
-        $img->encode('webp', 80)->save($imageWebPPath);
-        return $fileName . '.webp';
-    }
-    
+    }     
     
     /**
      * Display the specified resource.
@@ -288,5 +270,22 @@ class BlogController extends Controller
             Log::error('Error removing blog paragraph: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'An error occurred']);
         }
+    }
+
+     private function compressAndSaveImage($image, $blogTitle) {
+        $destinationPath = public_path("images/blog/");
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
+        $cleanBlogTitle = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $blogTitle));
+        $fileName = 'ecoqual-healthcare-solutions-' . $cleanBlogTitle . '-' . round(microtime(true) * 1000);
+        $imagePath = $destinationPath . $fileName . '.' . $image->getClientOriginalExtension();
+        $imageWebPPath = $destinationPath . $fileName . '.webp';
+        $img = Image::make($image->getRealPath());
+        $img->resize(800, null, function ($constraint) {
+            $constraint->aspectRatio();
+        })->encode('webp', 80)->save($imageWebPPath);
+
+        return $fileName . '.webp';
     }
 }
