@@ -23,6 +23,7 @@ Route::get('products/{slug}', [FrontPageController::class, 'productDetails'])->n
 
 Route::get('home-product', [FrontPageController::class, 'homeProductList'])->name('home-product');
 Route::get('blog', [FrontPageController::class, 'blogList'])->name('blog');
+Route::get('blog/{slug}', [FrontPageController::class, 'blogDetails'])->name('blog.details');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

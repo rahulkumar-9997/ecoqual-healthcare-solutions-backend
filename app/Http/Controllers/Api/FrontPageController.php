@@ -226,14 +226,10 @@ class FrontPageController extends Controller
     }
 
     public function blogList(){
-
         try {
-            $blogs = Blog::select('id', 'title', 'slug', 'blog_image', 'blog_description')
-                ->where('status', 1)
+            $blogs = Blog::select('id', 'title', 'slug', 'blog_image', 'bog_description')
                 ->orderBy('id', 'desc')
                 ->get();
-
-
             if ($blogs->isEmpty()) {
                 return response()->json([
                     'success' => true,
@@ -243,7 +239,7 @@ class FrontPageController extends Controller
             }
             $blogs->transform(function ($blogs) {
                 if (!empty($blogs->blog_image)) {
-                    $blogs->blog_image = asset('images/category/' . $blogs->blog_image);
+                    $blogs->blog_image = asset('images/blog/' . $blogs->blog_image);
                 } else {
                     $blogs->blog_image = null;
                 }
@@ -251,8 +247,8 @@ class FrontPageController extends Controller
             });
             return response()->json([
                 'success' => true,
-                'message' => 'Categories fetched successfully.',
-                'data'    => $categories
+                'message' => 'Blog fetched successfully.',
+                'data'    => $blogs
             ], 200);
 
         } catch (\Exception $e) {
@@ -264,6 +260,81 @@ class FrontPageController extends Controller
         }
     }
 
+    public function blogDetails($slug)
+    {
+        try {
+            $blog = Blog::with([
+                'category:id,title,slug',
+                'paragraphs' => function ($query) {
+                    $query->select('id', 'blog_id', 'paragraphs_title', 'bog_paragraph_description');
+                },
+                'paragraphs.productLinks' => function ($query) {
+                    $query->select('id', 'blog_paragraphs_id', 'product_id', 'links');
+                },
+                'paragraphs.productLinks.product' => function ($query) {
+                    $query->select('id', 'title', 'slug', 'product_description');
+                    $query->with([
+                        'images' => function ($imgQuery) {
+                            $imgQuery
+                                ->select('id', 'product_id', 'image_path')
+                                ->orderBy('sort_order', 'asc')
+                                ->limit(1);
+                        }
+                    ]);
+                }
+            ])
+            ->select('id', 'title', 'slug', 'blog_image', 'bog_description')
+            ->where('slug', $slug)
+            ->first();
+            if (!$blog) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No blog found.',
+                    'data'    => null
+                ], 200);
+            }
+            $data = [
+                'id' => $blog->id,
+                'title' => $blog->title,
+                'slug' => $blog->slug,
+                'description' => $blog->bog_description,
+                'blog_image' => $blog->blog_image ? asset('images/blog/' . $blog->blog_image) : null,
+                'paragraphs' => $blog->paragraphs->map(function ($paragraph) {
+                    return [
+                        'id' => $paragraph->id,
+                        'title' => $paragraph->paragraphs_title,
+                        'description' => $paragraph->bog_paragraph_description,
+                        'products' => $paragraph->productLinks->map(function ($link) {
+                            $product = $link->product;
+                            $image = $product && $product->images->isNotEmpty()
+                                ? asset('images/product/thumb/' . $product->images->first()->image_path)
+                                : null;
+                            return [
+                                'id' => $product->id ?? null,
+                                'title' => $product->title ?? null,
+                                'slug' => $product->slug ?? null,
+                                'description' => $this->stripInlineStyles($product->product_description) ?? null,
+                                'image' => $image,
+                            ];
+                        })
+                    ];
+                })
+            ];
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Blog fetched successfully.',
+                'data'    => $data
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
 
     private function stripInlineStyles($html)
     {
