@@ -316,10 +316,10 @@ class FrontPageController extends Controller
                                 'description' => $this->stripInlineStyles($product->product_description) ?? null,
                                 'image' => $image,
                                 'category' => optional($product->category) ? [
-    'id' => $product->category->id,
-    'title' => $product->category->title,
-    'slug' => $product->category->slug
-] : null
+                                    'id' => $product->category->id,
+                                    'title' => $product->category->title,
+                                    'slug' => $product->category->slug
+                                ] : null
                             ];
                         })
                     ];
