@@ -140,7 +140,23 @@
                                                         <div class="text-danger">{{ $errors->first('blog_links_one') }}</div>
                                                     @endif
                                                 @endforeach                                                
-                                            @endif
+                                            @else
+                                            @for ($linkIndex = 0; $linkIndex < 2; $linkIndex++)
+                                                <label for="product_name_{{ $index }}_{{ $linkIndex }}" class="form-label">Select Blog Links</label>
+                                                <div class="position-relative autocompleted mb-2">
+                                                    <div class="input-group">
+                                                        <input type="text" id="product_name_{{ $index }}_{{ $linkIndex }}" name="product_name[{{ $index }}][products][{{ $linkIndex }}][name]" class="form-control product-autocomplete" autocomplete="off">
+                                                        <span class="input-group-text">
+                                                            <i class="ti ti-refresh"></i>
+                                                            <div class="spinner-border spinner-border-sm product-loader" role="status" style="display: none;">
+                                                                <span class="visually-hidden">Loading...</span>
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                    <input type="hidden" name="product_id[{{ $index }}][products][{{ $linkIndex }}][id]" class="product_id">
+                                                </div>
+                                            @endfor
+                                        @endif
                                         </td>
                                         <td>
                                             <div class="snow-editor" style="height: 150px; width: 100%;"> {!! $paragraph->bog_paragraph_description !!}</div>

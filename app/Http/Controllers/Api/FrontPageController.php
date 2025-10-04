@@ -264,7 +264,6 @@ class FrontPageController extends Controller
     {
         try {
             $blog = Blog::with([
-                'category:id,title,slug',
                 'paragraphs' => function ($query) {
                     $query->select('id', 'blog_id', 'paragraphs_title', 'bog_paragraph_description');
                 },
@@ -272,13 +271,14 @@ class FrontPageController extends Controller
                     $query->select('id', 'blog_paragraphs_id', 'product_id', 'links');
                 },
                 'paragraphs.productLinks.product' => function ($query) {
-                    $query->select('id', 'title', 'slug', 'product_description');
+                    $query->select('id', 'title', 'slug', 'product_description', 'category_id');
                     $query->with([
+                        'category:id,title,slug',
                         'images' => function ($imgQuery) {
                             $imgQuery
-                                ->select('id', 'product_id', 'image_path')
-                                ->orderBy('sort_order', 'asc')
-                                ->limit(1);
+                            ->select('id', 'product_id', 'image_path')
+                            ->orderBy('sort_order', 'asc')
+                            ->limit(1);
                         }
                     ]);
                 }
@@ -315,6 +315,11 @@ class FrontPageController extends Controller
                                 'slug' => $product->slug ?? null,
                                 'description' => $this->stripInlineStyles($product->product_description) ?? null,
                                 'image' => $image,
+                                'category' => optional($product->category) ? [
+    'id' => $product->category->id,
+    'title' => $product->category->title,
+    'slug' => $product->category->slug
+] : null
                             ];
                         })
                     ];
