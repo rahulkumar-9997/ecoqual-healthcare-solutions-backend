@@ -16,30 +16,7 @@
       <iconify-icon icon="solar:double-alt-arrow-right-bold-duotone" class="button-sm-hover-icon"></iconify-icon>
    </button>
    <div class="scrollbar" data-simplebar>
-      <ul class="navbar-nav" id="navbar-nav">
-      <!-- <li class="nav-item">
-            <a class="nav-link menu-arrow" href="#sidebarProducts_user" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarProducts_user">
-               <span class="nav-icon">
-                  <iconify-icon icon=""></iconify-icon>
-               </span>
-               <span class="nav-text"> Manage User </span>
-            </a>
-            <div class="collapse" id="sidebarProducts_user">
-               <ul class="nav sub-navbar-nav">
-                 
-                     <li class="sub-nav-item">
-                        <a class="sub-nav-link" href="User">User</a>
-                     </li>
-                     <li class="sub-nav-item">
-                        <a class="sub-nav-link" href="User">Role</a>
-                     </li>
-                     <li class="sub-nav-item">
-                        <a class="sub-nav-link" href="User">Permissions</a>
-                     </li>
-                 
-               </ul>
-            </div>
-         </li> -->
+      <ul class="navbar-nav" id="navbar-nav">      
          @foreach($menus as $menu)
             @if($menu->children->isEmpty())
                <li class="nav-item">
@@ -70,7 +47,7 @@
             </li>
             @endif
          @endforeach
-         <li class="nav-item">
+         <!-- <li class="nav-item">
             <a class="nav-link menu-arrow" href="#sidebarProducts_user" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarProducts_user">
                <span class="nav-icon">
                   <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
@@ -109,7 +86,7 @@
                      </li>
                </ul>
             </div>
-         </li>
+         </li> -->
          <li class="nav-item">
             <a class="nav-link menu-arrow" href="#sidebarProducts_blogs" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarProducts_blogs">
                <span class="nav-icon">
@@ -129,7 +106,7 @@
                </ul>
             </div>
          </li>
-         <li class="nav-item">
+         <!-- <li class="nav-item">
             <a class="nav-link menu-arrow" href="#sidebar_banner" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebar_banner">
                <span class="nav-icon">
                   <iconify-icon icon="solar:checklist-bold-duotone"></iconify-icon>
@@ -194,18 +171,10 @@
                   </li>
                </ul>
             </div>
-         </li>
+         </li> -->      
          
          
          
-         <!-- <li class="nav-item">
-            <a class="nav-link" href="{{ route('manage-customer') }} ">
-               <span class="nav-icon">
-                  <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
-               </span>
-               <span class="nav-text">  Manage Customer </span>
-            </a>
-         </li> -->
       </ul>
    </div>
 </div>
