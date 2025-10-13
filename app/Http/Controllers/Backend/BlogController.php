@@ -48,15 +48,15 @@ class BlogController extends Controller
             'blog_img' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
             'blog_description' => 'required|string',
             'paragraphs_title' => 'nullable|array',
-            'paragraphs_title.*' => 'nullable|string|max:255',
+            'paragraphs_title.*.title' => 'nullable|string|max:255',
             'paragraphs_description' => 'nullable|array',
             'paragraphs_description.*' => 'nullable|string',
             'paragraphs_img' => 'nullable|array',
             'paragraphs_img.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
             'product_name' => 'nullable|array',
-            'product_name.*' => 'nullable|string|max:255',
+            'product_name.*.products.*.name' => 'nullable|string|max:255',
             'product_id' => 'nullable|array',
-            'product_id.*' => 'nullable|exists:products,id',
+            'product_id.*.products.*.id' => 'nullable|exists:products,id',
         ]);
         try {            
             DB::beginTransaction();
@@ -65,6 +65,7 @@ class BlogController extends Controller
             if ($blogImage) {
                 $blogImagePath = $this->compressAndSaveImage($blogImage, $request->blog_name);
             }
+
             $blog = Blog::create([
                 'title' => $validatedData['blog_name'],
                 'slug' => Str::slug($validatedData['blog_name']),
@@ -73,28 +74,40 @@ class BlogController extends Controller
                 'bog_description' => $validatedData['blog_description'],
                 'blog_image' => $blogImagePath,
             ]);
-            if (!empty($request->paragraphs_title[0])) {
-                foreach ($validatedData['paragraphs_title'] as $index => $paragraphTitle) {
-                    $paragraphImage = $request->file('paragraphs_img')[$index] ?? null;
-                    $paragraphImagePath = null;
-                    // if ($paragraphImage) {
-                    //     $paragraphImagePath = $this->compressAndSaveImage($paragraphImage,  $paragraphTitle);
-                    // }
-                    $blogParagraph = BlogParagraph::create([
-                        'blog_id' => $blog->id,
-                        'paragraphs_title' => $paragraphTitle,
-                        'bog_paragraph_description' => $validatedData['paragraphs_description'][$index] ?? '',
-                        'bog_paragraph_image' => $paragraphImagePath,
-                    ]);
 
-                    if (!empty($validatedData['product_id'])) {
-                        foreach ($validatedData['product_id'] as $productlink_index =>  $productId) {
-                            if (!empty($productId) && is_numeric($productId)) {
-                                BlogParagraphProductLinks::create([
-                                    'blog_paragraphs_id' => $blogParagraph->id,
-                                    'links' => $validatedData['product_name'][$productlink_index],
-                                    'product_id' => $productId,
-                                ]);
+            // Check if paragraphs exist and process them
+            if (!empty($validatedData['paragraphs_title'])) {
+                foreach ($validatedData['paragraphs_title'] as $index => $paragraphData) {
+                    $paragraphTitle = $paragraphData['title'] ?? '';
+                    
+                    if (!empty($paragraphTitle)) {
+                        $paragraphImage = $request->file('paragraphs_img')[$index] ?? null;
+                        $paragraphImagePath = null;
+                        
+                        // if ($paragraphImage) {
+                        //     $paragraphImagePath = $this->compressAndSaveImage($paragraphImage, $paragraphTitle);
+                        // }
+
+                        $blogParagraph = BlogParagraph::create([
+                            'blog_id' => $blog->id,
+                            'paragraphs_title' => $paragraphTitle,
+                            'bog_paragraph_description' => $validatedData['paragraphs_description'][$index] ?? '',
+                            'bog_paragraph_image' => $paragraphImagePath,
+                        ]);
+
+                        // Process product links for this paragraph
+                        if (!empty($validatedData['product_name'][$index]['products'])) {
+                            foreach ($validatedData['product_name'][$index]['products'] as $productIndex => $productData) {
+                                $productName = $productData['name'] ?? '';
+                                $productId = $validatedData['product_id'][$index]['products'][$productIndex]['id'] ?? null;
+                                
+                                if (!empty($productId) && is_numeric($productId)) {
+                                    BlogParagraphProductLinks::create([
+                                        'blog_paragraphs_id' => $blogParagraph->id,
+                                        'links' => $productName,
+                                        'product_id' => $productId,
+                                    ]);
+                                }
                             }
                         }
                     }
@@ -106,9 +119,9 @@ class BlogController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error creating blog: ' . $e->getMessage());
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'Error creating blog: ' . $e->getMessage());
         }
-    }     
+    }  
     
     /**
      * Display the specified resource.
