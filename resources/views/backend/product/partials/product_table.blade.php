@@ -8,6 +8,7 @@
                 <th style="width: 10%;">Image</th>              
                 <th>Status</th>
                 <th>Category</th>
+                <th>Sub-Category</th>
                 <th>Material</th>
                 <th>Ingredients</th>
                 <th>Specifications</th>
@@ -52,6 +53,7 @@
                         </span>
                     </td>
                     <td>{{ $product->category->title ?? 'No Category' }}</td>
+                    <td>{{ $product->subcategory->title ?? 'No Category' }}</td>
                     <td>
                         <span class="badge bg-purple">{{ $product->materials->count() }}</span>
                     </td>

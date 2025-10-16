@@ -24,6 +24,7 @@ use App\Models\ProductSpecification;
 use App\Models\ProductIngredient;
 use Illuminate\Support\Facades\DB;
 use App\Exports\ProductsExport;
+use App\Models\Subcategory;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -40,7 +41,7 @@ class ProductsController extends Controller
         $query = Product::with(
             ['images' => function ($query) {
                     $query->select('id', 'product_id', 'image_path')->orderBy('sort_order');
-            }, 'category', 'brand', 'attributes.attribute', 'attributes.values.attributeValue', 'materials', 'ingredients', 'specifications', 'additionalFeatures']
+            }, 'category', 'subcategory', 'brand', 'attributes.attribute', 'attributes.values.attributeValue', 'materials', 'ingredients', 'specifications', 'additionalFeatures']
         );
         if ($request->has('category_id') && $request->category_id) {
             $query->where('category_id', $request->category_id);
@@ -78,25 +79,41 @@ class ProductsController extends Controller
                
     }
 
-    public function create(){ 
+    public function create()
+    {
         $categoryId = request()->get('category');
-        // $attributesWithValues = UpdateHsnGstWithAttributes::where('category_id', $categoryId)
-        // ->with(['attribute', 'attribute.AttributesValues', 'attribute.AttributesValues.hsnGst'])
-        // ->get();
-        $attributesWithValues = UpdateHsnGstWithAttributes::where('category_id', $categoryId)
-            ->with(['attribute', 'attribute.AttributesValues', 'attribute.AttributesValues.hsnGst'])
-            ->get()
-            ->groupBy(function ($item) {
-                return $item->attribute->title ?? 'N/A';
-            });
-        $excludedTitles = $attributesWithValues->keys()->toArray();
+        if ($categoryId) {
+            $attributesWithValues = UpdateHsnGstWithAttributes::where('category_id', $categoryId)
+                ->with(['attribute', 'attribute.AttributesValues', 'attribute.AttributesValues.hsnGst'])
+                ->get()
+                ->groupBy(function ($item) {
+                    return $item->attribute->title ?? 'N/A';
+                });
+            $excludedTitles = $attributesWithValues->keys()->toArray();
+            $data['product_subcategory_list'] = Subcategory::where('status', 'on')
+                ->where('category_id', $categoryId)
+                ->orderBy('title', 'asc')
+                ->get();
+        } else {
+            $attributesWithValues = collect();
+            $excludedTitles = [];
+            $data['product_subcategory_list'] = collect();
+        }
         $data['product_attributes_list'] = Attribute::whereNotIn('title', $excludedTitles)
-            ->orderBy('title', 'asc')->get();
-        $data['product_category_list'] = Category::where('status', '=', 'on')->orderBy('title', 'asc')->get();
-        $data['brand_list'] = Brand::where('status', '=', 'on')->orderBy('title', 'asc')->get();
-        $data['label_list'] = Label::where('status', '=', 'on')->orderBy('title', 'asc')->get();
+            ->orderBy('title', 'asc')
+            ->get();
+        $data['product_category_list'] = Category::where('status', 'on')
+            ->orderBy('title', 'asc')
+            ->get();
+        $data['brand_list'] = Brand::where('status', 'on')
+            ->orderBy('title', 'asc')
+            ->get();
+        $data['label_list'] = Label::where('status', 'on')
+            ->orderBy('title', 'asc')
+            ->get();
         return view('backend.product.create', compact('data', 'attributesWithValues'));
-    } 
+    }
+
 
     public function getFilteredAttributes(Request $request){
         try {
@@ -124,6 +141,7 @@ class ProductsController extends Controller
             $this->validate($request, [
                 'product_name' => 'required|string|max:255',
                 'product_categories' => 'required|exists:category,id',
+                'product_subcategories' => 'required|exists:sub_category,id',
             ]);
             //dd( $request->all());
             Log::info('Request Data:', $request->all());
@@ -134,7 +152,7 @@ class ProductsController extends Controller
             $input = [
                 'title' => $request->input('product_name'),
                 'category_id' => $request->input('product_categories'),
-                //'hsn_code' => $request->input('hsn_code'),
+                'subcategory_id' => $request->input('product_subcategories'),
                 //'gst_in_per' => $request->input('gst_in_percentage'),
                 'label_id' => $request->input('label'),
                 'product_stock_status' => $request->input('product_stock_status'),
@@ -379,11 +397,29 @@ class ProductsController extends Controller
     }
 
     public function edit($id){
-        $data['product'] = Product::with(['images', 'category', 'brand', 'attributes.attribute', 'attributes.values.attributeValue', 'materials', 'ingredients', 'specifications', 'additionalFeatures'])->findOrFail($id);
+        $data['product'] = Product::with([
+            'images',
+            'category',
+            'subcategory',
+            'brand',
+            'attributes.attribute',
+            'attributes.values.attributeValue',
+            'materials',
+            'ingredients',
+            'specifications',
+            'additionalFeatures'
+        ])->findOrFail($id);
         $data['product_attributes_list'] = Attribute::orderBy('title', 'asc')->get();
-        $data['product_category_list'] = Category::where('status', '=', 'on')->orderBy('title', 'asc')->get();
-        $data['brand_list'] = Brand::where('status', '=', 'on')->orderBy('title', 'asc')->get();
-        $data['label_list'] = Label::where('status', '=', 'on')->orderBy('title', 'asc')->get();
+        $data['product_category_list'] = Category::where('status', 'on')
+            ->orderBy('title', 'asc')
+            ->get();
+        $categoryId = $data['product']->category_id;
+        $data['product_subcategory_list'] = Subcategory::where('status', 'on')
+            ->where('category_id', $categoryId)
+            ->orderBy('title', 'asc')
+            ->get();
+        $data['brand_list'] = Brand::where('status', 'on')->orderBy('title', 'asc')->get();
+        $data['label_list'] = Label::where('status', 'on')->orderBy('title', 'asc')->get();
         //return response()->json($data['product']);
         return view('backend.product.edit', compact('data'));
     }
@@ -399,15 +435,17 @@ class ProductsController extends Controller
         try {
                 DB::beginTransaction(); 
                 $this->validate($request, [
-                    'product_name' => 'required',
-                    'product_categories' => 'required',
-                    'hsn_code' => 'nullable|regex:/^\d{4}(\d{2}){0,1}(\d{2}){0,1}$/',
-                    'gst_in_percentage' => 'nullable|numeric|min:0|max:100',
+                    'product_name'         => 'required|string|max:255',
+                    'product_categories'   => 'required|exists:category,id',
+                    'product_subcategories'=> 'required|exists:sub_category,id',
+                    'hsn_code'             => ['nullable', 'regex:/^\d{4}(\d{2}){0,1}(\d{2}){0,1}$/'],
+                    'gst_in_percentage'    => 'nullable|numeric|min:0|max:100',
                 ]);
                 $update_product_row = Product::findOrFail($id);
                 $input = [
                 'title' => $request->input('product_name'),
                 'category_id' => $request->input('product_categories'),
+                'subcategory_id' => $request->input('product_subcategories'),
                 'label_id' => $request->input('label'),
                 'product_stock_status' => $request->input('product_stock_status'),
                 'product_tags' => $request->input('product_tags'),
@@ -767,7 +805,7 @@ class ProductsController extends Controller
     }
 
     public function show($id){
-        $data['product_details'] = Product::with(['images' => function($query) {$query->orderBy('sort_order');}, 'category', 'brand', 'attributes.attribute', 'attributes.values.attributeValue', 'materials', 'ingredients', 'specifications', 'additionalFeatures', 'inventories'])->findOrFail($id);
+        $data['product_details'] = Product::with(['images' => function($query) {$query->orderBy('sort_order');}, 'category', 'subcategory', 'brand', 'attributes.attribute', 'attributes.values.attributeValue', 'materials', 'ingredients', 'specifications', 'additionalFeatures', 'inventories'])->findOrFail($id);
         //return response()->json($data['product_details']);
         return view('backend.product.show', compact('data'));
     }

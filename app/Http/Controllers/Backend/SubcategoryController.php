@@ -52,7 +52,7 @@ class SubcategoryController extends Controller
                     <div class="col-md-12">
                         <div class="mb-3">
                             <label for="image" class="form-label">Category Image</label>
-                            <input type="file" id="image" name="image" class="form-control" required="">
+                            <input type="file" id="image" name="image" class="form-control">
                         </div>
                     </div>
                     
@@ -345,5 +345,34 @@ class SubcategoryController extends Controller
              return redirect()->back()->with('error','Somthings went wrong please try again !.');
         }
     }
+
+    public function deleteSubcategory($id)
+    {
+        $subcategory = Subcategory::find($id);
+        if (!$subcategory) {
+            return redirect()->back()->with('error', 'Subcategory not found.');
+        }
+        if (!empty($subcategory->image)) {
+            $imageName = $subcategory->image;
+            $paths = [
+                public_path('images/subcategory/original/' . $imageName),
+                public_path('images/subcategory/large/' . $imageName),
+                public_path('images/subcategory/small/' . $imageName),
+                public_path('images/subcategory/thumb/' . $imageName),
+                public_path('images/subcategory/icon/' . $imageName),
+            ];
+            foreach ($paths as $path) {
+                if (file_exists($path)) {
+                    @unlink($path);
+                }
+            }
+        }
+        if ($subcategory->delete()) {
+            return redirect()->back()->with('success', 'Subcategory deleted successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Something went wrong. Please try again!');
+        }
+    }
+
 
 }

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\Frontend\SitemapController;
-
+use App\Models\Subcategory;
 use App\Http\Controllers\Backend\LoginController;
 use App\Http\Controllers\Backend\ForgotPasswordController;
 use App\Http\Controllers\Backend\CacheController;
@@ -124,6 +124,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/subcategory', [SubcategoryController::class, 'store'])->name('subcategory.store');
     Route::post('subcategory/edit/{subcategory}', [SubcategoryController::class, 'edit'])->name('subcategory.edit');
     Route::post('subcategory/update/{subcategory}', [SubcategoryController::class, 'updateSubcategory'])->name('subcategory.update');
+    Route::delete('subcategory/destroy/{subcategory}', [SubcategoryController::class, 'deleteSubcategory'])->name('subcategory.destroy');
+     Route::get('/get-subcategories/{categoryId}', function($categoryId){
+        return Subcategory::where('category_id', $categoryId)
+                ->where('status', 'on')
+                ->orderBy('title', 'asc')
+                ->get();
+        });
     /**subcategory */
     /**Attributes */
     Route::get('attributes', [AttributeController::class, 'index'])->name('attributes');
@@ -159,7 +166,7 @@ Route::group(['middleware' => ['auth']], function() {
     /**Attributes */
     /**Product route */
     Route::resource('product', ProductsController::class);
-    
+   
     Route::post('/products/bulk-delete', [ProductsController::class, 'bulkDelete'])->name('product.bulkDelete');
     Route::post('/products/modal-image-form', [ProductsController::class, 'imageUploadModalForm'])->name('products.modal-image-form');
     Route::post('/products/modal-image-form/submit', [ProductsController::class, 'imageUploadModalFormSubmit'])->name('products.modal-image-form.submit');

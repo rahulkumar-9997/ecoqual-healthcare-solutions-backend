@@ -50,6 +50,28 @@
                      <div class="card-body">
                         <div class="row">
                            <div class="col-lg-12">
+                              <div class="mb-2">
+                                 <label for="product_subcategories" class="form-label">Product Sub-category</label>
+                                 <select class="form-control" 
+                                          id="product_subcategories" 
+                                          data-choices 
+                                          data-choices-groups 
+                                          data-placeholder="Select Subcategories" 
+                                          name="product_subcategories">
+                                    <option value="">Choose a subcategory</option>
+                                    @if ($data['product_subcategory_list'] && $data['product_subcategory_list']->isNotEmpty())
+                                          @foreach ($data['product_subcategory_list'] as $subcategory)
+                                             <option value="{{ $subcategory->id }}"
+                                                {{ old('product_subcategories') == $subcategory->id ? 'selected' : '' }}>
+                                                {{ $subcategory->title }}
+                                             </option>
+                                          @endforeach
+                                    @endif
+                                 </select>
+                              </div>
+
+                           </div>
+                           <div class="col-lg-12">
                               <div class="mb-1">
                                  <label for="product_name" class="form-label">Product Name *</label>
                                  <input type="text" name="product_name" required="required" id="product_name" class="form-control" placeholder="Items Name" value="{{old('product_name')}}">

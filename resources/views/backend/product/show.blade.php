@@ -47,6 +47,10 @@
                             <td>{{ $data['product_details']->category->title ?? 'No Category' }}</td>
                         </tr>
                         <tr>
+                            <th>Sub-category</th>
+                            <td>{{ $data['product_details']->subcategory->title ?? 'No Category' }}</td>
+                        </tr>
+                        <tr>
                             <th>Product Price</th>
                             <td>{{ $data['product_details']->product_price }}</td>
                         </tr>

@@ -35,6 +35,21 @@
                         </div>
                      </div>
                      <div class="col-lg-6">
+                        <div class="mb-3">
+                           <label for="product_subcategories" class="form-label">Subcategory</label>
+                           <select
+                              name="product_subcategories" id="product_subcategories" class="form-control">
+                              <option value="">-- Select Subcategory --</option>
+                              @foreach($data['product_subcategory_list'] as $subcategory)
+                                    <option value="{{ $subcategory->id }}" 
+                                       {{ $data['product']->subcategory_id == $subcategory->id ? 'selected' : '' }}>
+                                       {{ $subcategory->title }}
+                                    </option>
+                              @endforeach
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-lg-12">
                         <div class="mb-2">
                            <label for="product_name" class="form-label">Product Name *</label>
                            <input type="text" name="product_name" required="required" id="product_name" class="form-control" placeholder="Items Name" value="{{ $data['product']->title }}">
@@ -613,6 +628,23 @@
          });
       });
    }
+</script>
+<script>
+document.getElementById('product_categories').addEventListener('change', function() {
+    let categoryId = this.value;
+    fetch(`/get-subcategories/${categoryId}`)
+        .then(res => res.json())
+        .then(data => {
+            let subcategorySelect = document.getElementById('product_subcategories');
+            subcategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
+            data.forEach(sub => {
+                let option = document.createElement('option');
+                option.value = sub.id;
+                option.text = sub.title;
+                subcategorySelect.appendChild(option);
+            });
+        });
+});
 </script>
 
 @endpush

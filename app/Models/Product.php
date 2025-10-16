@@ -135,6 +135,11 @@ class Product extends Model
     {
         return $this->belongsTo(Label::class, 'label_id', 'id');
     }
+
+    public function subcategory()
+    {
+        return $this->belongsTo(Subcategory::class, 'subcategory_id', 'id');
+    }
     /** 
      * Write code on Method
      *

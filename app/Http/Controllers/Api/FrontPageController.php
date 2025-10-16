@@ -16,10 +16,15 @@ class FrontPageController extends Controller
     public function menuCategory()
     {
         try {
-            $categories = Category::select('id', 'title', 'slug', 'category_heading', 'description', 'image')
-                ->where('status', 'on')
-                ->orderBy('id', 'desc')
-                ->get();
+             $categories = Category::select('id', 'title', 'slug', 'category_heading', 'description', 'image')
+            ->where('status', 'on')
+            ->orderBy('id', 'desc')
+            ->with(['subCategories' => function($query) {
+                $query->select('id', 'title', 'slug', 'category_id', 'image')
+                      ->where('status', 'on')
+                      ->orderBy('title', 'asc');
+            }])
+            ->get();
 
             if ($categories->isEmpty()) {
                 return response()->json([
@@ -29,13 +34,14 @@ class FrontPageController extends Controller
                 ], 200);
             }
             $categories->transform(function ($category) {
-                if (!empty($category->image)) {
-                    $category->image = asset('images/category/' . $category->image);
-                } else {
-                    $category->image = null;
-                }
+                $category->image = $category->image ? asset('images/category/' . $category->image) : null;
+                $category->subCategories->transform(function ($sub) {
+                    $sub->image = $sub->image ? asset('images/subcategory/' . $sub->image) : null;
+                    return $sub;
+                });
                 return $category;
             });
+
             return response()->json([
                 'success' => true,
                 'message' => 'Categories fetched successfully.',

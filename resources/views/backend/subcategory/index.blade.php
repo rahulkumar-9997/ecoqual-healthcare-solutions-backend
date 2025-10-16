@@ -91,13 +91,13 @@
                                     <a href="javascript:void(0);" class="btn btn-soft-primary btn-sm editSubcategory" data-subcatid="{{ $subcategory_list_row->id }}"  data-size="md" data-title="Edit Subcategory" data-bs-toggle="tooltip" class="btn btn-sm btn-primary" data-bs-original-title="Edit Sub category" data-url="{{ route('subcategory.edit', $subcategory_list_row->id) }}">
                                        <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                                     </a>
-                                    <!--<form method="POST" action="{{ route('label.delete', $subcategory_list_row->id) }}" style="margin-left: 10px;">
+                                    <form method="POST" action="{{ route('subcategory.destroy', $subcategory_list_row->id) }}" style="margin-left: 10px;">
                                           @csrf
                                           <input name="_method" type="hidden" value="DELETE">
                                              <a href="#" title="Delete Label" data-name="{{ $subcategory_list_row->title }}" class="show_confirm btn btn-soft-danger btn-sm" data-title="Delete Label" data-bs-toggle="tooltip" >
                                              <iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon>
                                           </a>
-                                    </form>-->
+                                    </form>
                                     
                                  </div>
                               </td>
