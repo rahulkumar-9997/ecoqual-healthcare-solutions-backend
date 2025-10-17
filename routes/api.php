@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\FrontPageController;
 Route::get('menu', [FrontPageController::class, 'menuCategory'])->name('menu');
 Route::prefix('categories')->group(function () {
     //Route::get('/', [FrontPageController::class, 'categoryList'])->name('categories.index');
-    Route::get('/{slug}', [FrontPageController::class, 'categoryProductList'])->name('categories.show');
+    Route::get('/{category_slug}/{sub_category_slug}', [FrontPageController::class, 'categoryProductList'])->name('categories.show');
 });
 Route::get('products/{slug}', [FrontPageController::class, 'productDetails'])->name('products.details');
 

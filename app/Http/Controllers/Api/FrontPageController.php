@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Label;
 use App\Models\Blog;
 use App\Models\BlogParagraph;
+use App\Models\Subcategory;
 use Exception;
 class FrontPageController extends Controller
 {
@@ -58,28 +59,47 @@ class FrontPageController extends Controller
     }
 
 
-    public function categoryProductList($slug)
+    public function categoryProductList($category_slug, $subcategory_slug)
     {
         try {
             $category = Category::select('id', 'title', 'slug', 'category_heading', 'description')
-                ->where('slug', $slug)
-                ->firstOrFail();
+                ->where('slug', $category_slug)
+                ->first();
+
+            if (!$category) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Category not found.'
+                ], 404);
+            }
+            $subcategory = Subcategory::select('id', 'title', 'slug', 'description')
+                ->where('slug', $subcategory_slug)
+                ->where('category_id', $category->id)
+                ->first();
+
+            if (!$subcategory) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Subcategory not found for the given category.'
+                ], 404);
+            }
             $products = Product::with(['images' => function ($query) {
                     $query->select('id', 'product_id', 'image_path')
                         ->orderBy('sort_order')
                         ->limit(1);
                 }])
-                ->select('id', 'title', 'slug', 'product_description')
-                ->where('category_id', $category->id)
+                ->select('id', 'title', 'slug', 'product_description', 'category_id', 'subcategory_id')
+                ->where([
+                    ['category_id', '=', $category->id],
+                    ['subcategory_id', '=', $subcategory->id],
+                    ['product_status', '=', 1]
+                ])
                 ->get();
             $products->transform(function ($product) {
                 $product->product_description = $this->stripInlineStyles($product->product_description);
-                if ($product->images->isNotEmpty()) {
-                    $filename = $product->images[0]->image_path;
-                    $product->image = asset('images/product/small/' . $filename);
-                } else {
-                    $product->image = null;
-                }
+                $product->image = $product->images->isNotEmpty()
+                    ? asset('images/product/small/' . $product->images->first()->image_path)
+                    : null;
                 unset($product->images);
                 return $product;
             });
@@ -87,23 +107,27 @@ class FrontPageController extends Controller
                 'success'  => true,
                 'message'  => 'Products fetched successfully.',
                 'category' => $category,
+                'subcategory' => $subcategory,
                 'products' => $products
             ], 200, [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Category not found.'
-            ], 404);
+        } catch (\Throwable $e) {
+            Log::error('Category Product API Error', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'category_slug' => $category_slug,
+                'subcategory_slug' => $subcategory_slug
+            ]);
 
-        } catch (\Exception $e) {
-            Log::error('Category Product API Error: '.$e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Something went wrong. Please try again later.'
             ], 500);
         }
     }
+
 
     public function productDetails($slug)
     {
