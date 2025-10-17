@@ -139,6 +139,9 @@ class FrontPageController extends Controller
                 'category' => function ($query) {
                     $query->select('id', 'title', 'slug');
                 },
+                'subcategory' => function ($query) {
+                    $query->select('id', 'category_id', 'title', 'slug', 'description');
+                },
                 'materials' => function ($query) {
                     $query->select('id', 'product_id', 'material');
                 },
@@ -152,7 +155,7 @@ class FrontPageController extends Controller
                     $query->select('id', 'product_id', 'product_additional_featur_value');
                 }
             ])
-            ->select('id', 'title', 'slug', 'product_description', 'product_specification', 'video_id', 'meta_title', 'meta_description', 'category_id') 
+            ->select('id', 'title', 'slug', 'product_description', 'product_specification', 'video_id', 'meta_title', 'meta_description', 'category_id', 'subcategory_id') 
             ->where('slug', $slug)
             ->where('product_status', 1)
             ->firstOrFail();
@@ -179,6 +182,7 @@ class FrontPageController extends Controller
                     'meta_title' => $product->meta_title,
                     'meta_description' => $product->meta_description,
                     'category' => $product->category,
+                    'subcategory' => $product->subcategory,
                     'images' => $images,
                     'materials' => $materials,
                     'ingredients' => $ingredients,
@@ -211,13 +215,16 @@ class FrontPageController extends Controller
                     'category' => function ($query) {
                         $query->select('id', 'title', 'slug');
                     },
+                    'subcategory' => function ($query) {
+                        $query->select('id', 'title', 'slug');
+                    },
                     'images' => function ($query) {
                         $query->select('id', 'product_id', 'image_path')
                             ->orderBy('sort_order')
                             ->limit(1);
                     }
                 ])
-                ->select('id', 'title', 'slug', 'product_description', 'category_id', 'label_id')
+                ->select('id', 'title', 'slug', 'product_description', 'category_id', 'label_id', 'subcategory_id')
                 ->where('label_id', $home_product_label_id)
                 ->take(8)
                 ->get();
@@ -225,7 +232,7 @@ class FrontPageController extends Controller
                 $product->product_description = $this->stripInlineStyles($product->product_description);
                 if ($product->images->isNotEmpty()) {
                     $filename = $product->images[0]->image_path;
-                    $product->image = asset('images/product/thumb/' . $filename);
+                    $product->image = asset('images/product/small/' . $filename);
                 } else {
                     $product->image = null;
                 }
