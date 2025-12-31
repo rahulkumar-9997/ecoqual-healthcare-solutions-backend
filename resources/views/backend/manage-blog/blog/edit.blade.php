@@ -2,12 +2,6 @@
 @section('title','Edit Blog')
 @section('main-content')
 @push('styles')
-<link href="{{asset('backend/assets/vendor/datatables/css/jquery.dataTables.css')}}" rel="stylesheet" type="text/css" media="screen" />
-<link href="{{asset('backend/assets/vendor/datatables/extensions/TableTools/css/dataTables.tableTools.min.css')}}" rel="stylesheet" type="text/css" media="screen" />
-<link href="{{asset('backend/assets/vendor/datatables/extensions/Responsive/css/dataTables.responsive.css')}}" rel="stylesheet" type="text/css" media="screen" />
-<link href="{{asset('backend/assets/vendor/datatables/extensions/Responsive/bootstrap/3/dataTables.bootstrap.css')}}" rel="stylesheet" type="text/css" media="screen" />
-<link href="{{asset('backend/assets/plugins/select2/select2.css')}}" rel="stylesheet" type="text/css" media="screen" />
-<link href="{{asset('backend/assets/plugins/multi-select/css/multi-select.css')}}" rel="stylesheet" type="text/css" media="screen" />
 @endpush
 <!-- Start Container Fluid -->
 <div class="container-fluid">
@@ -22,7 +16,7 @@
                         @csrf
                         <input type="hidden" name="_method" value="PUT">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="blog_category" class="form-label">Select Blog Category*</label>
                                     <select class="form-control" id="blog_category" data-choices data-choices-groups data-placeholder="Select Blog Categories" name="blog_category">
@@ -38,7 +32,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="blog_name" class="form-label">Blog Title Name *</label>
                                     <input type="text" id="blog_name" name="blog_name" class="form-control" value="{{ old('blog_name', $blog->title) }}">
@@ -47,7 +41,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="blog_img" class="form-label">Blog Image *</label>
                                     <input type="file" id="blog_img" class="form-control" aria-label="file example" name="blog_img" accept="image/*" value="{{ old('blog_img')}}">
@@ -59,22 +53,37 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="mb-2">
                                     <h5 class="card-title mb-1 anchor" id="quill-snow-editor">
                                         Blog Description *
                                     </h5>
-                                    <div class="mb-3">
-                                        <div class="snow-editor" style="height: 150px; width: 100%;">
-                                            {!! $blog->bog_description !!}
-                                        </div>
-                                        <textarea name="blog_description" class="hidden-textarea" style="display:none;">
-                                    {!! $blog->bog_description !!}
-                                    </textarea>
+                                    <div class="mb-3">                                        
+                                        <textarea name="blog_description" class="ckeditor4">
+                                                {!! $blog->bog_description !!}
+                                        </textarea>
                                         @if($errors->has('blog_description'))
                                         <div class="text-danger">{{ $errors->first('blog_description') }}</div>
                                         @endif
                                     </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="meta_title" class="form-label">Meta Title</label>
+                                    <input type="text" id="meta_title" name="meta_title" class="form-control" value="{{ $blog->meta_title }}">
+                                    @if($errors->has('meta_title'))
+                                    <div class="text-danger">{{ $errors->first('meta_title') }}</div>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="meta_description" class="form-label">Meta Description</label>
+                                    <textarea class="form-control" id="meta_description" rows="3" name="meta_description"> {{ $blog->meta_description }}</textarea>
+                                    @if($errors->has('meta_description'))
+                                    <div class="text-danger">{{ $errors->first('meta_description') }}</div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -137,8 +146,8 @@
                                                 @endfor
                                         </td>
                                         <td>
-                                            <div class="snow-editor" style="height: 150px; width: 100%;"> {!! $paragraph->bog_paragraph_description !!}</div>
-                                            <textarea name="paragraphs_description[]" class="hidden-textarea" style="display:none;">
+                                            
+                                            <textarea name="paragraphs_description[]" class="ckeditor4">
                                             {!! $paragraph->bog_paragraph_description !!}
                                             </textarea>
                                             @if($errors->has('paragraphs_description'))
@@ -173,7 +182,14 @@
 <link rel="stylesheet" href="{{asset('backend/assets/js/autocomplete/jquery-ui.css')}}">
 <script src="{{asset('backend/assets/js/autocomplete/jquery-ui.min.js')}}"></script>
 <!--autocomplete-->
-<script src="{{asset('backend/assets/js/components/form-quilljs.js')}}"></script>
+<script src="{{ asset('backend/assets/ckeditor-4/ckeditor.js') }}"></script>
+<script>
+    document.querySelectorAll('.ckeditor4').forEach(function(el) {
+        CKEDITOR.replace(el, {
+            removePlugins: 'exportpdf'
+        });
+    });
+</script>
 <script src="{{asset('backend/assets/js/pages/create-blog.js')}}" type="text/javascript"></script>
 
 @endpush

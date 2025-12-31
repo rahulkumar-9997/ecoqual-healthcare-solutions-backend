@@ -20,7 +20,7 @@ class BlogController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(){
-        $blogs = Blog::with(['category', 'paragraphs.productLinks'])->orderBy('id', 'desc')->get();
+        $blogs = Blog::with(['category', 'paragraphs.productLinks'])->orderBy('id', 'desc')->paginate(10);
         return view('backend.manage-blog.blog.index', compact('blogs'));
        
     }
@@ -47,6 +47,8 @@ class BlogController extends Controller
             'blog_name' => 'required|string|max:255',
             'blog_img' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
             'blog_description' => 'required|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:255',
             'paragraphs_title' => 'nullable|array',
             'paragraphs_title.*.title' => 'nullable|string|max:255',
             'paragraphs_description' => 'nullable|array',
@@ -73,17 +75,17 @@ class BlogController extends Controller
                 'blog_category_id' => $validatedData['blog_category'],
                 'bog_description' => $validatedData['blog_description'],
                 'blog_image' => $blogImagePath,
+                'meta_title' => $validatedData['meta_title'],
+                'meta_description' => $validatedData['meta_description'],
             ]);
 
-            // Check if paragraphs exist and process them
             if (!empty($validatedData['paragraphs_title'])) {
                 foreach ($validatedData['paragraphs_title'] as $index => $paragraphData) {
                     $paragraphTitle = $paragraphData['title'] ?? '';
                     
                     if (!empty($paragraphTitle)) {
                         $paragraphImage = $request->file('paragraphs_img')[$index] ?? null;
-                        $paragraphImagePath = null;
-                        
+                        $paragraphImagePath = null;                        
                         // if ($paragraphImage) {
                         //     $paragraphImagePath = $this->compressAndSaveImage($paragraphImage, $paragraphTitle);
                         // }
@@ -160,6 +162,8 @@ class BlogController extends Controller
             'blog_name' => 'required|string|max:255',
             'blog_img' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
             'blog_description' => 'required|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:255',
             'paragraphs_title' => 'nullable|array',
             'paragraphs_title.*.title' => 'nullable|string|max:255',
             'paragraphs_description' => 'nullable|array',
@@ -174,7 +178,9 @@ class BlogController extends Controller
             $blog = Blog::findOrFail($id);
             $blog->title = $validatedData['blog_name'];
             $blog->blog_category_id = $validatedData['blog_category'];
-            $blog->bog_description = $validatedData['blog_description'];            
+            $blog->bog_description = $validatedData['blog_description']; 
+            $blog->meta_title = $validatedData['meta_title'];
+            $blog->meta_description = $validatedData['meta_description'];          
             if ($request->hasFile('blog_img')) {
                 if ($blog->blog_image) {
                     $imagePath = public_path('images/blog/'.$blog->blog_image);

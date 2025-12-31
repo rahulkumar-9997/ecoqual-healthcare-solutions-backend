@@ -25,19 +25,19 @@ class SubcategoryController extends Controller
             <form method="POST" action="'.route('subcategory.store').'" accept-charset="UTF-8" enctype="multipart/form-data" id="uploadForm">
                 '.csrf_field().'
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Subcategory Name</label>
+                            <label for="name" class="form-label">Sub-category Name</label>
                             <input type="text" id="name" name="name" class="form-control" required="">
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="category_description" class="form-label">Subcategory Description</label>
+                            <label for="category_description" class="form-label">Sub-category Description</label>
                             <textarea class="form-control" id="category_description" rows="3" name="description"></textarea>
                         </div>
                     </div>
-                    <div class="col-lg-12">
+                    <div class="col-lg-5">
                         <div class="mb-3">
                             <label for="category" class="form-label">Select Category</label>
                             <select class="form-select" id="category" name="category">
@@ -49,20 +49,31 @@ class SubcategoryController extends Controller
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-5">
                         <div class="mb-3">
                             <label for="image" class="form-label">Category Image</label>
                             <input type="file" id="image" name="image" class="form-control">
                         </div>
                     </div>
                     
-                    <div class="mb-3 col-md-12">
+                    <div class="mb-3 mt-3 col-md-2">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" role="switch" id="status" name="status">
                             <label class="form-check-label" for="status">Status</label>
                         </div>
                     </div>
-                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="meta_title" class="form-label">Meta Title</label>
+                            <input type="text" id="meta_title" name="meta_title" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="meta_description" class="form-label">Meta Description</label>
+                            <textarea class="form-control" id="meta_description" rows="3" name="meta_description"></textarea>
+                        </div>
+                    </div>
                     <div class="modal-footer pb-0">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -81,10 +92,14 @@ class SubcategoryController extends Controller
     public function store(Request $request){
         $request->validate([
             'name' => 'required|string|max:255',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:255',
         ]);
         $input['title'] = $request->input('name');
         $input['description'] = $request->input('description');
         $input['category_id'] = $request->input('category');
+        $input['meta_title'] = $request->input('meta_title');
+        $input['meta_description'] = $request->input('meta_description');
         if(!empty($request->input('status'))){
             $input['status'] = $request->input('status');
         }else{
@@ -189,19 +204,19 @@ class SubcategoryController extends Controller
             <form method="POST" action="'.route('subcategory.update', $subcategory_row->id).'" accept-charset="UTF-8" enctype="multipart/form-data" id="uploadForm">
                 '.csrf_field().'
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="mb-3">
                             <label for="name" class="form-label">Subcategory Name</label>
                             <input type="text" id="name" name="name" value="' . $subcategory_row->title . '" class="form-control" required="">
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="mb-3">
                             <label for="category_description" class="form-label">Subcategory Description</label>
                             <textarea class="form-control" id="category_description" rows="3" name="description">'.$subcategory_row->description.'</textarea>
                         </div>
                     </div>
-                    <div class="col-lg-12">
+                    <div class="col-md-5">
                         <div class="mb-3">
                             <label for="category" class="form-label">Select Category</label>
                             <select class="form-select" id="category" name="category">
@@ -214,21 +229,34 @@ class SubcategoryController extends Controller
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-5">
                         <div class="mb-3">
                             <label for="image" class="form-label">Category Image</label>
                             <input type="file" id="image" name="image" class="form-control">
                         </div>
-                    </div>
-                    '.$subcategory_image.'
+                        '.$subcategory_image.'
+                    </div>                
                     
-                    <div class="mb-3 col-md-12">
+                    <div class="mb-3 mt-3 col-md-2">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" role="switch" id="status" name="status" '.$subcategory_status.'>
                             <label class="form-check-label" for="status">Status</label>
                         </div>
                     </div>
                     
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="meta_title" class="form-label">Meta Title</label>
+                            <input type="text" id="meta_title" name="meta_title" class="form-control"
+                            value="'.$subcategory_row->meta_title.'">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="meta_description" class="form-label">Meta Description</label>
+                            <textarea class="form-control" id="meta_description" rows="3" name="meta_description">'.$subcategory_row->meta_description.'</textarea>
+                        </div>
+                    </div>
                     <div class="modal-footer pb-0">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -251,6 +279,8 @@ class SubcategoryController extends Controller
         $input['title'] = $request->input('name');
         $input['description'] = $request->input('description');
         $input['category_id'] = $request->input('category');
+        $input['meta_title'] = $request->input('meta_title');
+        $input['meta_description'] = $request->input('meta_description');
         if(!empty($request->input('status'))){
             $input['status'] = $request->input('status');
         }else{
@@ -259,17 +289,12 @@ class SubcategoryController extends Controller
         
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-        
             // Set timezone to Asia/Kolkata
             date_default_timezone_set('Asia/Kolkata');
-        
-            // Get image filename and extension
             $filenameWithExt = $image->getClientOriginalName();
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $image_name = str_replace('-', ' ', $filename);
             $extension = $image->getClientOriginalExtension();
-            
-            // Get the current timestamp and microtime
             $time = time();
             $microtime = microtime(true);
             $milliseconds = sprintf("%03d", ($microtime - floor($microtime)) * 1000);
@@ -300,8 +325,7 @@ class SubcategoryController extends Controller
                 unlink($old_original_image);
             }
             /**unlink image file */
-            // Set image file name
-            $image_file_name = 'subcategory-image-' . $date_time . '.webp'; // Save as WebP
+            $image_file_name = 'subcategory-image-' . $date_time . '.webp'; 
         
             // LARGE IMAGE (1920x1080)
             $destination_path_large = public_path('images/subcategory/large/');
@@ -335,7 +359,6 @@ class SubcategoryController extends Controller
             $destinationPath = public_path('images/subcategory/original/');
             $img_original = Image::make($image->getRealPath());
             $img_original->encode('webp', 90)->save($destinationPath . '/' . $image_file_name); 
-            // Save image data into database (WebP image path)
             $input['image'] = $image_file_name;
         }
         $subcategory_row_update = $subcategory_row->update($input);

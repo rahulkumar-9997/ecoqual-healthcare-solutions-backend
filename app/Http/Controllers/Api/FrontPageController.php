@@ -72,7 +72,7 @@ class FrontPageController extends Controller
                     'message' => 'Category not found.'
                 ], 404);
             }
-            $subcategory = Subcategory::select('id', 'title', 'slug', 'description')
+            $subcategory = Subcategory::select('id', 'title', 'slug', 'description', 'meta_title', 'meta_description')
                 ->where('slug', $subcategory_slug)
                 ->where('category_id', $category->id)
                 ->first();
@@ -320,7 +320,7 @@ class FrontPageController extends Controller
                     ]);
                 }
             ])
-            ->select('id', 'title', 'slug', 'blog_image', 'bog_description')
+            ->select('id', 'title', 'slug', 'blog_image', 'bog_description', 'meta_title', 'meta_description')
             ->where('slug', $slug)
             ->first();
             if (!$blog) {
@@ -335,6 +335,8 @@ class FrontPageController extends Controller
                 'title' => $blog->title,
                 'slug' => $blog->slug,
                 'description' => $blog->bog_description,
+                'meta_title' => $blog->meta_title,
+                'meta_description' => $blog->meta_description,
                 'blog_image' => $blog->blog_image ? asset('images/blog/' . $blog->blog_image) : null,
                 'paragraphs' => $blog->paragraphs->map(function ($paragraph) {
                     return [

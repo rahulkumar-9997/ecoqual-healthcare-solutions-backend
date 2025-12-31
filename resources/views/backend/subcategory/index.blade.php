@@ -16,7 +16,7 @@
                <h4 class="card-title flex-grow-1">All Subcategory List</h4>
                <a href="javascript:void(0)" 
                   data-subcategory-popup="true" 
-                  data-size="md" 
+                  data-size="lg" 
                   data-title="Add Subcategory" 
                   data-url="{{ route('subcategory.create') }}" 
                   data-bs-toggle="tooltip" 
@@ -67,7 +67,7 @@
                               </td>
                               <td>
                                  @if(!empty($subcategory_list_row->image))
-                                    <img src="{{ asset('images/subcategory/thumb/'. $subcategory_list_row->image) }}" style="width: 100px;">
+                                    <img src="{{ asset('images/subcategory/thumb/'. $subcategory_list_row->image) }}" class="img-thumbnail" style="width: 70px;">
                                  
                                  @endif
                               </td>
@@ -88,7 +88,7 @@
                                     <!--<a href="#!" class="btn btn-light btn-sm">
                                        <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
                                     </a>-->
-                                    <a href="javascript:void(0);" class="btn btn-soft-primary btn-sm editSubcategory" data-subcatid="{{ $subcategory_list_row->id }}"  data-size="md" data-title="Edit Subcategory" data-bs-toggle="tooltip" class="btn btn-sm btn-primary" data-bs-original-title="Edit Sub category" data-url="{{ route('subcategory.edit', $subcategory_list_row->id) }}">
+                                    <a href="javascript:void(0);" class="btn btn-soft-primary btn-sm editSubcategory" data-subcatid="{{ $subcategory_list_row->id }}"  data-size="lg" data-title="Edit Subcategory" data-bs-toggle="tooltip" class="btn btn-sm btn-primary" data-bs-original-title="Edit Sub category" data-url="{{ route('subcategory.edit', $subcategory_list_row->id) }}">
                                        <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                                     </a>
                                     <form method="POST" action="{{ route('subcategory.destroy', $subcategory_list_row->id) }}" style="margin-left: 10px;">
