@@ -88,7 +88,7 @@ class FrontPageController extends Controller
                         ->orderBy('sort_order')
                         ->limit(1);
                 }])
-                ->select('id', 'title', 'slug', 'product_description', 'category_id', 'subcategory_id')
+                ->select('id', 'title', 'slug', 'short_description', 'product_description', 'category_id', 'subcategory_id')
                 ->where([
                     ['category_id', '=', $category->id],
                     ['subcategory_id', '=', $subcategory->id],
@@ -155,7 +155,7 @@ class FrontPageController extends Controller
                     $query->select('id', 'product_id', 'product_additional_featur_value');
                 }
             ])
-            ->select('id', 'title', 'slug', 'product_description', 'product_specification', 'video_id', 'meta_title', 'meta_description', 'category_id', 'subcategory_id') 
+            ->select('id', 'title', 'slug', 'short_description', 'product_description', 'product_specification', 'video_id', 'meta_title', 'meta_description', 'category_id', 'subcategory_id') 
             ->where('slug', $slug)
             ->where('product_status', 1)
             ->firstOrFail();
@@ -176,6 +176,7 @@ class FrontPageController extends Controller
                     'id' => $product->id,
                     'title' => $product->title,
                     'slug' => $product->slug,
+                    'short_description' => $product->short_description,
                     'product_description' => $product->product_description,
                     'product_specification' => $product->product_specification,
                     'video_id' => $product->video_id,
@@ -224,7 +225,7 @@ class FrontPageController extends Controller
                             ->limit(1);
                     }
                 ])
-                ->select('id', 'title', 'slug', 'product_description', 'category_id', 'label_id', 'subcategory_id')
+                ->select('id', 'title', 'slug', 'short_description', 'product_description', 'category_id', 'label_id', 'subcategory_id')
                 ->where('label_id', $home_product_label_id)
                 ->take(8)
                 ->get();
@@ -308,7 +309,7 @@ class FrontPageController extends Controller
                     $query->select('id', 'blog_paragraphs_id', 'product_id', 'links');
                 },
                 'paragraphs.productLinks.product' => function ($query) {
-                    $query->select('id', 'title', 'slug', 'product_description', 'category_id');
+                    $query->select('id', 'title', 'slug', 'short_description', 'product_description', 'category_id');
                     $query->with([
                         'category:id,title,slug',
                         'images' => function ($imgQuery) {

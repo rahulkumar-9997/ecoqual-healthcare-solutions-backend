@@ -153,7 +153,7 @@ class ProductsController extends Controller
                 'title' => $request->input('product_name'),
                 'category_id' => $request->input('product_categories'),
                 'subcategory_id' => $request->input('product_subcategories'),
-                //'gst_in_per' => $request->input('gst_in_percentage'),
+                'short_description' => $request->input('short_description'),
                 'label_id' => $request->input('label'),
                 'product_stock_status' => $request->input('product_stock_status'),
                 'product_tags' => $request->input('product_tags'),
@@ -456,6 +456,7 @@ class ProductsController extends Controller
                 'attributes_show_status' => $request->input('attributes_show_status') === 'on' ? 1 : 1,
                 'meta_title' => $request->input('meta_title'),
                 'meta_description' => $request->input('meta_description'),
+                'short_description' => $request->input('short_description'),
                 'product_description' => $request->input('product_description'),
                 'product_specification' => $request->input('product_specification'),
             ];

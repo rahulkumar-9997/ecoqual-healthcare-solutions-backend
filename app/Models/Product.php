@@ -33,6 +33,7 @@ class Product extends Model
         'attributes_show_status',
         'meta_title',
         'meta_description',
+        'short_description',
         'product_description',
         'product_specification',
         'video_id',

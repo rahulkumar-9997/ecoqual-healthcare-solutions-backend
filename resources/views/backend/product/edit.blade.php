@@ -406,6 +406,14 @@
                   </div>
                   <div class="row">
                      <div class="col-lg-12">
+                        <div class="mb-1">
+                           <label for="meta_title" class="form-label">Product Short Description</label>
+                           <textarea class="form-control bg-light-subtle" id="short_description" rows="4" name="short_description" placeholder="Short description about product">{{ $data['product']->short_description }}</textarea>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-lg-12">
                         <div class="mb-2">
                            <h5 class="card-title mb-1 anchor" id="quill-snow-editor">
                               Product Description
